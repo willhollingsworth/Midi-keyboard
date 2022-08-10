@@ -13,6 +13,8 @@ https://www.tobias-erichsen.de/software/loopmidi.html
 
 -   add overlay to display changes
 -   add hotkey/gui switching of scales
+-   add finer adjustment of note position/bindings, currently jumps in octeves only (8 semis)
+-   add active app sensing, making it only active in certain programs
 
 original idea from
 https://github.com/goldnjohn/KeyMIDI
