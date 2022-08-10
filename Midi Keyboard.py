@@ -34,6 +34,7 @@ def key_down(key):
             release_all_held_keys()
             if starting_octeve > 0:
                 starting_octeve -= 1
+        print('starting octeve', starting_octeve)
     active_keys.append(str(key))
 
 
@@ -45,16 +46,18 @@ def key_up(key):
 
 
 def calc_note_offset(key):
+    global starting_octeve
     offset = scale_offset
     scale_target = active_scale
     main_index = note_hotkeys.index(key.char)
-    scale_length = len(scale_target)
-    scale_index, note_index = divmod(main_index, scale_length)
-    if scale_index != 0:
-        offset += scale_index*sum(scale_target)
+    scale_length = len(scale_target)+1
+    octeve_count, note_index = divmod(main_index, scale_length)
+    if octeve_count > 0 or starting_octeve > 0:
+        print(starting_octeve, octeve_count, sum(scale_target))
+        offset += (starting_octeve + octeve_count)*sum(scale_target)
     if note_index != 0:
         offset += sum(scale_target[0:note_index])
-    print(main_index, scale_index, note_index, offset)
+    print(main_index, octeve_count, starting_octeve, note_index, offset)
     return offset
 
 
@@ -67,7 +70,7 @@ def key_event(key, state):
     if not 'char' in dir(key):
         return
     if key.char in note_hotkeys:
-        note = starting_octeve*8 + calc_note_offset(key)
+        note = calc_note_offset(key)
         send_midi(note, state)
     return
 
@@ -102,11 +105,12 @@ utility_hotkeys = ['Key.up', 'Key.down']
 starting_octeve = 0
 active_keys = []
 major_scale_offsets = [2, 2, 1, 2, 2, 2, 1]
-major_scale_root_list = ['c', 'c#', 'd', 'd#',
-                         'e', 'e#', 'f',  'g', 'g#',  'a', 'a#', 'b']
-root_note = 'a#'
-active_scale = major_scale_offsets
-scale_offset = major_scale_root_list.index(root_note)
+minor_scale_offsets = [2, 1, 2, 2, 1, 2, 2]
+root_notes = ['c', 'c#', 'd', 'd#',
+                         'e', 'f', 'f#'  'g', 'g#',  'a', 'a#', 'b']
+root_note = 'c'
+active_scale = minor_scale_offsets
+scale_offset = root_notes.index(root_note)
 print('scale offset', scale_offset)
 midiout = setup_midi_port()
 disable_regular_hotkey_usage()
