@@ -11,9 +11,8 @@ https://www.tobias-erichsen.de/software/loopmidi.html
 
 ## todo
 
--   add shifting up and down semitones/octeves via hotkeys
--   add scales
--   add additional keys
+-   add overlay to display changes
+-   add hotkey/gui switching of scales
 
 original idea from
 https://github.com/goldnjohn/KeyMIDI
