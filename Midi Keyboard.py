@@ -1,4 +1,3 @@
-from operator import index
 import pynput
 import rtmidi
 import keyboard
@@ -10,8 +9,8 @@ def release_all_held_keys():
 
 
 def send_midi(note, state='up'):
-    print('sending midi', state, ', note:', note)
     if state == 'down':
+        print('sending midi note:', note)
         midi_state = 0x90
         velocity = 127
     elif state == 'up' or True:
@@ -53,16 +52,16 @@ def calc_note_offset(key):
     scale_length = len(scale_target)+1
     octeve_count, note_index = divmod(main_index, scale_length)
     if octeve_count > 0 or starting_octeve > 0:
-        print(starting_octeve, octeve_count, sum(scale_target))
+        # print(starting_octeve, octeve_count, sum(scale_target))
         offset += (starting_octeve + octeve_count)*sum(scale_target)
     if note_index != 0:
         offset += sum(scale_target[0:note_index])
-    print(main_index, octeve_count, starting_octeve, note_index, offset)
+    # print(main_index, octeve_count, starting_octeve, note_index, offset)
     return offset
 
 
 def key_event(key, state):
-    print(str(key), state)
+    # print(str(key), state)
     if str(key) == 'Key.esc':
         print(key, 'pressed, quiting')
         release_all_held_keys()
@@ -109,7 +108,7 @@ minor_scale_offsets = [2, 1, 2, 2, 1, 2, 2]
 root_notes = ['c', 'c#', 'd', 'd#',
                          'e', 'f', 'f#'  'g', 'g#',  'a', 'a#', 'b']
 root_note = 'c'
-active_scale = minor_scale_offsets
+active_scale = major_scale_offsets
 scale_offset = root_notes.index(root_note)
 print('scale offset', scale_offset)
 midiout = setup_midi_port()
