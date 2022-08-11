@@ -20,21 +20,33 @@ def send_midi(note, state='up'):
 
 
 def key_down(key):
-    global starting_octeve
     if active_keys:
         if str(key) in active_keys:
             return
-    key_event(key, 'down')
     if str(key) in utility_hotkeys:
-        if str(key) == 'Key.up':
-            release_all_held_keys()
-            starting_octeve += 1
-        if str(key) == 'Key.down':
-            release_all_held_keys()
-            if starting_octeve > 0:
-                starting_octeve -= 1
-        print('starting octeve', starting_octeve)
+        utility_functions(str(key))
+    else:
+        key_event(key, 'down')
     active_keys.append(str(key))
+
+
+def utility_functions(key):
+    global starting_octeve
+    global starting_semi
+    release_all_held_keys()
+    if str(key) == 'Key.up':
+        starting_octeve += 1
+        print('changing starting octeve', starting_octeve)
+    if str(key) == 'Key.down':
+        if starting_octeve > 0:
+            starting_octeve -= 1
+        print('changing starting octeve', starting_octeve)
+    if str(key) == 'Key.left':
+        starting_semi -= 1
+        print('changing starting semi', starting_semi)
+    if str(key) == 'Key.right':
+        starting_semi += 1
+        print('changing starting semi', starting_semi)
 
 
 def key_up(key):
@@ -46,9 +58,10 @@ def key_up(key):
 
 def calc_note_offset(key):
     global starting_octeve
+    global starting_semi
     offset = scale_offset
     scale_target = active_scale
-    main_index = note_hotkeys.index(key.char)
+    main_index = note_hotkeys.index(key.char) + starting_semi
     scale_length = len(scale_target)+1
     octeve_count, note_index = divmod(main_index, scale_length)
     if octeve_count > 0 or starting_octeve > 0:
@@ -95,20 +108,25 @@ def disable_regular_hotkey_usage():
 
 global note_hotkeys
 global starting_octeve
+global starting_semi
 global active_keys
 global utility_hotkeys
 
 note_hotkeys = '1234567890qwertyuiopasdfghjklzxcvbnm'
-utility_hotkeys = ['Key.up', 'Key.down']
+utility_hotkeys = ['Key.up', 'Key.down', 'Key.left', 'Key.right']
 # utility_hotkeys = ['Key.' + key for key in utility_hotkeys]
 starting_octeve = 0
+starting_semi = 0
 active_keys = []
 major_scale_offsets = [2, 2, 1, 2, 2, 2, 1]
 minor_scale_offsets = [2, 1, 2, 2, 1, 2, 2]
 root_notes = ['c', 'c#', 'd', 'd#',
                          'e', 'f', 'f#'  'g', 'g#',  'a', 'a#', 'b']
+
+# change the following as required
 root_note = 'c'
 active_scale = major_scale_offsets
+
 scale_offset = root_notes.index(root_note)
 print('scale offset', scale_offset)
 midiout = setup_midi_port()
